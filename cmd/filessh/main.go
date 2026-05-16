@@ -1,25 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/LSN0WM4N/filessh/pkg/tui"
+	"github.com/LSN0WM4N/filessh/pkg/sshclient"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	size := tui.TermSize()
-	fmt.Printf("Cols: %d\nRows: %d\n", size.Width, size.Height)
+	godotenv.Load()
 
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGWINCH)
+	host := os.Getenv("SSH_HOST")
+	port := os.Getenv("SSH_PORT")
+	user := os.Getenv("SSH_USER")
+	pass := os.Getenv("SSH_PASS")
 
-	for range sig {
-		size := tui.TermSize()
-		fmt.Printf("Cols: %d\nRows: %d\n", size.Width, size.Height)
-	}
-
-	fmt.Println("[+] Still working on it, sorry :(")
+	sshclient.SetupConnection(sshclient.UserConfig{
+		Host:     host,
+		Port:     port,
+		Username: &user,
+		Password: &pass,
+	})
 }
