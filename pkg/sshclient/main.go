@@ -2,7 +2,6 @@ package sshclient
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"golang.org/x/crypto/ssh"
@@ -41,21 +40,6 @@ func SetupShell(session *ssh.Session) *ssh.Session {
 		panic(err)
 	}
 
-	// stdin, err := session.StdinPipe()
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// stdout, err := session.StdoutPipe()
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// stderr, err := session.StderrPipe()
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -64,11 +48,10 @@ func SetupShell(session *ssh.Session) *ssh.Session {
 	if err != nil {
 		panic(err)
 	}
-	session.Shell()
+	err = session.Wait()
+	if err != nil {
+		fmt.Printf("Session ended with error: %v\n", err)
+	}
 
 	return session
-}
-
-func ReadOutput(stdout io.Reader) {
-	io.Copy(os.Stdout, stdout)
 }
