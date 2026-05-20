@@ -1,3 +1,5 @@
+# TODOS
+
 * Fix shell unparsed characters
   * Improve SSH connection
   * Clean and comment the code
