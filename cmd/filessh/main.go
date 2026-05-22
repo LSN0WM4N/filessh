@@ -41,7 +41,7 @@ func main() {
 	// fmt.Fprintln(stdin, "pwd")
 	// fmt.Fprintln(stdin, "ls")
 
-	// mantener vivo
+	// keep alive
 	fmt.Println("ENTER para salir")
 	fmt.Scanln()
 
