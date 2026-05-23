@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"golang.org/x/crypto/ssh"
@@ -74,4 +75,59 @@ access to some basic commands, not a whole shell
 !IMPORTANT: In this mode, programs such as `vim`, `htop` or
 these like will no work, for these use PTY mode
 */
-func PipeMode() {}
+func PipeMode(session *ssh.Session, ctx context.Context, bus *bus.EventBus) (*ssh.Session, error) {
+	fd := int(os.Stdin.Fd())
+
+	width, height, err := term.GetSize(fd)
+	if err != nil {
+		width, height = 80, 24
+	}
+
+	oldState, err := term.MakeRaw(fd)
+	if err != nil {
+		fmt.Printf("Failed to set raw terminal: %v\n", err)
+		return nil, err
+	}
+	defer term.Restore(fd, oldState)
+
+	_ = session
+	_ = bus
+
+	drawConsoleFrame(width, height)
+	fmt.Printf("\x1b[2;3Hstill working on it")
+	fmt.Printf("\x1b[%d;1H", height)
+
+	buf := make([]byte, 1)
+	for {
+		n, err := os.Stdin.Read(buf)
+		if err != nil || n == 0 {
+			break
+		}
+		if buf[0] == 'q' || buf[0] == 'Q' || buf[0] == 3 {
+			break
+		}
+	}
+
+	fmt.Print("\x1b[0m\x1b[2J\x1b[H")
+
+	return session, nil
+}
+
+func drawConsoleFrame(width, height int) {
+	if width < 2 || height < 2 {
+		return
+	}
+
+	horizontal := "+" + strings.Repeat("-", width-2) + "+"
+	blank := "|" + strings.Repeat(" ", width-2) + "|"
+
+	fmt.Print("\x1b[2J")
+	for row := 1; row <= height; row++ {
+		fmt.Printf("\x1b[%d;1H", row)
+		if row == 1 || row == height {
+			fmt.Print(horizontal)
+		} else {
+			fmt.Print(blank)
+		}
+	}
+}

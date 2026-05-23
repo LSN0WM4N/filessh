@@ -4,9 +4,10 @@ import (
 	"context"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"github.com/LSN0WM4N/filessh/pkg/sshclient"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -45,7 +46,8 @@ func main() {
 
 	go eventBus.Run(ctx)
 
-	session, _ = sshclient.PTYMode(session, ctx, eventBus)
+	// PTYSession, _ := sshclient.PTYMode(session, ctx, eventBus)
+	// TUISession, _ := sshclient.PipeMode(session, ctx, eventBus)
 
 	session.Close()
 	os.Exit(0)

@@ -1,9 +1,10 @@
 # TODOS
 
 #### Urgent
-* Change SetupShell for PTYMode 
-* Create Pipe Mode
-* Setup the basis for TUI Mode
+
+Clean ssclient folder 
+  * Create a clean interface for PTY and Pipe MODE 
+  * find a way to add pluggins
 
 ---
 
@@ -21,14 +22,3 @@
 * TUI
 * Plugins (Maybe)
 
-Everything above TUI layer (inclusive) will have access 
-to an Event Bus to know triggered events
-
-Events interface:
-```
-EVENT {
-  name    string,
-  key     string,
-  payload byte[],
-}
-```
