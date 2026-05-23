@@ -7,6 +7,9 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/LSN0WM4N/filessh/pkg/bus"
+	"github.com/LSN0WM4N/filessh/pkg/explorer"
+	"github.com/LSN0WM4N/filessh/pkg/plugins"
+	"github.com/LSN0WM4N/filessh/pkg/pty"
 	"github.com/LSN0WM4N/filessh/pkg/sshclient"
 )
 
@@ -32,23 +35,63 @@ func main() {
 
 	defer client.Close()
 
-	session, err := sshclient.OpenSession(client)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
 	// Setup main bus and plugins
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	eventBus := bus.NewEventBus()
+	registry := plugins.NewRegistry()
+
+	pluginCtx := plugins.PluginContext{
+		Bus:     eventBus,
+		Session: client,
+		Fd:      int(os.Stdin.Fd()),
+	}
+
+	loadedPlugins := []plugins.Plugin{
+		// &DirectoryTreePlugin{},
+		&explorer.ExplorerPlugin{},
+		&pty.TerminalPlugin{},
+	}
+	for _, p := range loadedPlugins {
+		p.Init(pluginCtx)
+		registry.Register(p)
+	}
+
+	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
+		focused := registry.Focused().ID()
+		if e.Payload.(bus.KeyInfo).Seq == "\t" {
+			if focused == "terminal" {
+				registry.SetFocus("explorer")
+			} else {
+				registry.SetFocus("terminal")
+			}
+		}
+	})
+
+	eventBus.Subscribe(bus.EventFocus, func(e bus.Event) {
+		registry.SetFocus(e.Payload.(string))
+	})
+
+	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
+		if p := registry.Focused(); p != nil {
+			p.OnKey(e)
+		}
+	})
+
+	eventBus.Subscribe(bus.EventResize, func(e bus.Event) {
+		for _, p := range registry.All() {
+			p.OnEvent(e)
+		}
+	})
+
+	registry.SetFocus("explorer")
 
 	go eventBus.Run(ctx)
 
 	// PTYSession, _ := sshclient.PTYMode(session, ctx, eventBus)
 	// TUISession, _ := sshclient.PipeMode(session, ctx, eventBus)
 
-	session.Close()
+	<-ctx.Done()
 	os.Exit(0)
 }
