@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"os"
 
+	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"github.com/LSN0WM4N/filessh/pkg/sshclient"
 	"github.com/joho/godotenv"
 )
@@ -16,12 +17,14 @@ func main() {
 	user := os.Getenv("SSH_USER")
 	pass := os.Getenv("SSH_PASS")
 
+	// Stablish a connection
 	client, err := sshclient.SetupConnection(sshclient.UserConfig{
 		Host:     host,
 		Port:     port,
 		Username: &user,
 		Password: &pass,
 	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -34,16 +37,15 @@ func main() {
 	}
 	defer session.Close()
 
-	session = sshclient.SetupShell(session)
+	// Setup main bus and plugins
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	// fmt.Fprintln(os.Stdin, "pwd")
-	// fmt.Fprintln(stdin, "cd /tmp")
-	// fmt.Fprintln(stdin, "pwd")
-	// fmt.Fprintln(stdin, "ls")
+	eventBus := bus.NewEventBus()
 
-	// keep alive
-	fmt.Println("ENTER para salir")
-	fmt.Scanln()
+	go eventBus.Run(ctx)
+
+	session, _ = sshclient.PTYMode(session, ctx, eventBus)
 
 	session.Close()
 	os.Exit(0)
