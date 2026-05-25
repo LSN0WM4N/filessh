@@ -8,6 +8,7 @@ import (
 
 	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
+	"github.com/LSN0WM4N/filessh/pkg/input"
 	"github.com/LSN0WM4N/filessh/pkg/plugins"
 	"github.com/LSN0WM4N/filessh/pkg/pty"
 	"github.com/LSN0WM4N/filessh/pkg/sshclient"
@@ -88,6 +89,7 @@ func main() {
 	registry.SetFocus("explorer")
 
 	go eventBus.Run(ctx)
+	go input.ReadInput(ctx, eventBus, registry)
 
 	// PTYSession, _ := sshclient.PTYMode(session, ctx, eventBus)
 	// TUISession, _ := sshclient.PipeMode(session, ctx, eventBus)
