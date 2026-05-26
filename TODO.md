@@ -3,7 +3,7 @@
 #### Urgent
 
 Fix key detection, Ctrl+c should exit and enter broke the whole program 
-  * handle term raw mode and fix this whole sh*t
+  * handle term raw mode and fix this whole sh*t  
 
 Clean ssclient folder 
   * Create a clean interface for PTY and Pipe MODE 

@@ -2,7 +2,6 @@ package input
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/LSN0WM4N/filessh/pkg/bus"
@@ -47,8 +46,22 @@ func ReadInput(ctx context.Context, b *bus.EventBus, registry *plugins.Registry)
 
 			event := parseInput(chunk)
 
-			if event.Payload.(bus.KeyInfo).Seq == "alt+tab" {
+			if event.Payload.(bus.KeyInfo).Seq == "alt+q" {
 				b.Publish(event)
+				continue
+			}
+
+			if event.Payload.(bus.KeyInfo).Seq == "ctrl+c" {
+				b.Publish(bus.Event{Type: bus.EventQuit})
+				continue
+			}
+
+			if event.Payload.(bus.KeyInfo).Seq == "enter" {
+				if focused := registry.Focused(); focused != nil && focused.ID() == "terminal" {
+					focused.OnKey(event)
+				} else {
+					b.Publish(event)
+				}
 				continue
 			}
 
@@ -66,8 +79,8 @@ func parseInput(buf []byte) bus.Event {
 	key := bus.KeyInfo{}
 
 	switch {
-	case len(buf) == 2 && buf[0] == 0x1b && buf[1] == '\t':
-		key.Seq = "ctrl+tab"
+	case len(buf) == 2 && buf[0] == 0x1b && buf[1] == 'q':
+		key.Seq = "alt+q"
 
 	case len(buf) >= 3 && buf[0] == 0x1b && buf[1] == '[':
 		switch buf[2] {
@@ -101,8 +114,6 @@ func parseInput(buf []byte) bus.Event {
 			key.Key = rune(buf[0])
 		}
 	}
-
-	fmt.Printf("Pressed: [%s, %s]", key.Key, key.Seq)
 
 	return bus.Event{
 		Type:    bus.EventKey,

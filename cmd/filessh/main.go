@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -60,33 +61,40 @@ func main() {
 	}
 
 	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-		focused := registry.Focused().ID()
-		if e.Payload.(bus.KeyInfo).Seq == "\t" {
-			if focused == "terminal" {
-				registry.SetFocus("explorer")
-			} else {
-				registry.SetFocus("terminal")
-			}
+		fmt.Println(e)
+
+		// focused := registry.Focused().ID()
+		if e.Payload.(bus.KeyInfo).Seq == "alt+q" {
+			// if focused == "terminal" {
+			// 	registry.SetFocus("explorer")
+			// } else {
+			// 	registry.SetFocus("terminal")
+			// }
+			fmt.Printf("[Changed focus]\n")
 		}
 	})
 
-	eventBus.Subscribe(bus.EventFocus, func(e bus.Event) {
-		registry.SetFocus(e.Payload.(string))
-	})
+	// eventBus.Subscribe(bus.EventFocus, func(e bus.Event) {
+	// 	registry.SetFocus(e.Payload.(string))
+	// })
 
-	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-		if p := registry.Focused(); p != nil {
-			p.OnKey(e)
-		}
-	})
+	// eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
+	// 	if p := registry.Focused(); p != nil {
+	// 		p.OnKey(e)
+	// 	}
+	// })
 
-	eventBus.Subscribe(bus.EventResize, func(e bus.Event) {
-		for _, p := range registry.All() {
-			p.OnEvent(e)
-		}
-	})
+	// eventBus.Subscribe(bus.EventResize, func(e bus.Event) {
+	// 	for _, p := range registry.All() {
+	// 		p.OnEvent(e)
+	// 	}
+	// })
 
-	registry.SetFocus("explorer")
+	// registry.SetFocus("explorer")
+
+	eventBus.Subscribe(bus.EventQuit, func(e bus.Event) {
+		cancel()
+	})
 
 	go eventBus.Run(ctx)
 	go input.ReadInput(ctx, eventBus, registry)
