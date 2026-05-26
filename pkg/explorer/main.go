@@ -18,12 +18,14 @@ type ExplorerPlugin struct {
 func (e *ExplorerPlugin) ID() string { return "explorer" }
 
 func (e *ExplorerPlugin) Init(ctx plugins.PluginContext) {
-	e.ctx = ctx
-	e.cwd = "/"
+	// e.ctx = ctx
+	// e.cwd = "/"
+	fmt.Print("\033[H\033[2J")
 }
 
 func (e *ExplorerPlugin) OnFocus() {
-	e.loadDir(e.cwd)
+	// e.loadDir(e.cwd)
+	fmt.Println("[Explorer] OnFocus Executed")
 }
 
 func (e *ExplorerPlugin) loadDir(path string) {
@@ -37,28 +39,33 @@ func (e *ExplorerPlugin) loadDir(path string) {
 
 func (e *ExplorerPlugin) OnKey(ev bus.Event) {
 	key := ev.Payload.(bus.KeyInfo)
-	switch key.Seq {
-	case "down":
-		e.cursor++
-	case "up":
-		e.cursor--
-	case "enter":
-		selected := e.entries[e.cursor]
-		if selected.IsDir() {
-			e.cwd = e.cwd + "/" + selected.Name()
-			e.loadDir(e.cwd)
-		}
-	}
+	fmt.Printf("[Explorer] OnKey pressed: [%s]\n", key)
+	// switch key.Seq {
+	// case "down":
+	// 	e.cursor++
+	// case "up":
+	// 	e.cursor--
+	// case "enter":
+	// 	selected := e.entries[e.cursor]
+	// 	if selected.IsDir() {
+	// 		e.cwd = e.cwd + "/" + selected.Name()
+	// 		e.loadDir(e.cwd)
+	// 	}
+	// }
 }
 
 func (e *ExplorerPlugin) Render(vp plugins.Viewport) {
-	for i, entry := range e.entries {
-		// dibujar cada entrada en su línea dentro del viewport
-		_ = i
-		_ = entry
-	}
+	fmt.Println("[Explorer] Render executed")
+	// for i, entry := range e.entries {
+	// 	// dibujar cada entrada en su línea dentro del viewport
+	// 	_ = i
+	// 	_ = entry
+	// }
 }
 
-func (e *ExplorerPlugin) OnBlur()              {}
-func (e *ExplorerPlugin) OnEvent(ev bus.Event) {}
-func (e *ExplorerPlugin) Destroy()             {}
+func (e *ExplorerPlugin) OnEvent(ev bus.Event) {
+	fmt.Printf("[Explorer] OnEvent triggered: [%s]\n", ev)
+}
+
+func (e *ExplorerPlugin) OnBlur()  {}
+func (e *ExplorerPlugin) Destroy() {}

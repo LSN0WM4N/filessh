@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/ssh"
 
 	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
@@ -18,23 +19,10 @@ import (
 func main() {
 	godotenv.Load()
 
-	host := os.Getenv("SSH_HOST")
-	port := os.Getenv("SSH_PORT")
-	user := os.Getenv("SSH_USER")
-	pass := os.Getenv("SSH_PASS")
-
-	// Stablish a connection
-	client, err := sshclient.SetupConnection(sshclient.UserConfig{
-		Host:     host,
-		Port:     port,
-		Username: &user,
-		Password: &pass,
-	})
-
+	client, err := createClient()
 	if err != nil {
 		panic(err)
 	}
-
 	defer client.Close()
 
 	// Setup main bus and plugins
@@ -42,34 +30,16 @@ func main() {
 	defer cancel()
 
 	eventBus := bus.NewEventBus()
-	registry := plugins.NewRegistry()
-
-	pluginCtx := plugins.PluginContext{
-		Bus:     eventBus,
-		Session: client,
-		Fd:      int(os.Stdin.Fd()),
-	}
-
-	loadedPlugins := []plugins.Plugin{
-		// &DirectoryTreePlugin{},
-		&explorer.ExplorerPlugin{},
-		&pty.TerminalPlugin{},
-	}
-	for _, p := range loadedPlugins {
-		p.Init(pluginCtx)
-		registry.Register(p)
-	}
+	registry := setupPlugins(client, eventBus)
 
 	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-		fmt.Println(e)
-
-		// focused := registry.Focused().ID()
+		focused := registry.Focused().ID()
 		if e.Payload.(bus.KeyInfo).Seq == "alt+q" {
-			// if focused == "terminal" {
-			// 	registry.SetFocus("explorer")
-			// } else {
-			// 	registry.SetFocus("terminal")
-			// }
+			if focused == "terminal" {
+				registry.SetFocus("explorer")
+			} else {
+				registry.SetFocus("terminal")
+			}
 			fmt.Printf("[Changed focus]\n")
 		}
 	})
@@ -90,7 +60,7 @@ func main() {
 	// 	}
 	// })
 
-	// registry.SetFocus("explorer")
+	registry.SetFocus("explorer")
 
 	eventBus.Subscribe(bus.EventQuit, func(e bus.Event) {
 		cancel()
@@ -104,4 +74,47 @@ func main() {
 
 	<-ctx.Done()
 	os.Exit(0)
+}
+
+func createClient() (*ssh.Client, error) {
+	host := os.Getenv("SSH_HOST")
+	port := os.Getenv("SSH_PORT")
+	user := os.Getenv("SSH_USER")
+	pass := os.Getenv("SSH_PASS")
+
+	// Stablish a connection
+	client, err := sshclient.SetupConnection(sshclient.UserConfig{
+		Host:     host,
+		Port:     port,
+		Username: &user,
+		Password: &pass,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
+func setupPlugins(client *ssh.Client, eventBus *bus.EventBus) *plugins.Registry {
+	registry := plugins.NewRegistry()
+
+	pluginCtx := plugins.PluginContext{
+		Bus:     eventBus,
+		Session: client,
+		Fd:      int(os.Stdin.Fd()),
+	}
+
+	loadedPlugins := []plugins.Plugin{
+		// &DirectoryTreePlugin{},
+		&explorer.ExplorerPlugin{},
+		&pty.TerminalPlugin{},
+	}
+	for _, p := range loadedPlugins {
+		p.Init(pluginCtx)
+		registry.Register(p)
+	}
+
+	return registry
 }
