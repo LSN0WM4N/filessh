@@ -9,6 +9,7 @@ type PluginContext struct {
 	Bus     *bus.EventBus
 	Session *ssh.Client
 	Fd      int
+	Data    map[string]interface{}
 }
 
 type Viewport struct {

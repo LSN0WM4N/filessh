@@ -48,11 +48,11 @@ func main() {
 	// 	registry.SetFocus(e.Payload.(string))
 	// })
 
-	// eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-	// 	if p := registry.Focused(); p != nil {
-	// 		p.OnKey(e)
-	// 	}
-	// })
+	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
+		if p := registry.Focused(); p != nil {
+			p.OnKey(e)
+		}
+	})
 
 	// eventBus.Subscribe(bus.EventResize, func(e bus.Event) {
 	// 	for _, p := range registry.All() {
@@ -104,6 +104,7 @@ func setupPlugins(client *ssh.Client, eventBus *bus.EventBus) *plugins.Registry 
 		Bus:     eventBus,
 		Session: client,
 		Fd:      int(os.Stdin.Fd()),
+		Data:    map[string]interface{}{"cwd": "/home/sn0wm4n"},
 	}
 
 	loadedPlugins := []plugins.Plugin{
