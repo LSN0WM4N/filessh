@@ -2,8 +2,7 @@
 
 #### Urgent
 
-Explorer is printing weird 
-Have to work on TUI mode first 
+TUI Handled with bubbletea
 
 Clean ssclient folder 
   * Create a clean interface for PTY and Pipe MODE 

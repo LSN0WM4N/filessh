@@ -14,6 +14,7 @@ import (
 	"github.com/LSN0WM4N/filessh/pkg/plugins"
 	"github.com/LSN0WM4N/filessh/pkg/pty"
 	"github.com/LSN0WM4N/filessh/pkg/sshclient"
+	"github.com/LSN0WM4N/filessh/pkg/tui"
 )
 
 func main() {
@@ -30,7 +31,29 @@ func main() {
 	defer cancel()
 
 	eventBus := bus.NewEventBus()
-	registry := setupPlugins(client, eventBus)
+
+	registry := plugins.NewRegistry()
+
+	pluginCtx := plugins.PluginContext{
+		Bus:     eventBus,
+		Session: client,
+		Fd:      int(os.Stdin.Fd()),
+		Data:    map[string]interface{}{"cwd": "/home/sn0wm4n"},
+	}
+	// Works?
+	// I think no :(
+
+	explorer := &explorer.ExplorerPlugin{}
+
+	loadedPlugins := []plugins.Plugin{
+		// &DirectoryTreePlugin{},
+		explorer,
+		&pty.TerminalPlugin{},
+	}
+	for _, p := range loadedPlugins {
+		p.Init(pluginCtx)
+		registry.Register(p)
+	}
 
 	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
 		focused := registry.Focused().ID()
@@ -54,23 +77,14 @@ func main() {
 		}
 	})
 
-	// eventBus.Subscribe(bus.EventResize, func(e bus.Event) {
-	// 	for _, p := range registry.All() {
-	// 		p.OnEvent(e)
-	// 	}
-	// })
-
 	registry.SetFocus("explorer")
 
-	eventBus.Subscribe(bus.EventQuit, func(e bus.Event) {
-		cancel()
-	})
+	eventBus.Subscribe(bus.EventQuit, func(e bus.Event) { cancel() })
 
 	go eventBus.Run(ctx)
 	go input.ReadInput(ctx, eventBus, registry)
 
-	// PTYSession, _ := sshclient.PTYMode(session, ctx, eventBus)
-	// TUISession, _ := sshclient.PipeMode(session, ctx, eventBus)
+	tui.InitTui(explorer, eventBus)
 
 	<-ctx.Done()
 	os.Exit(0)
@@ -95,27 +109,4 @@ func createClient() (*ssh.Client, error) {
 	}
 
 	return client, nil
-}
-
-func setupPlugins(client *ssh.Client, eventBus *bus.EventBus) *plugins.Registry {
-	registry := plugins.NewRegistry()
-
-	pluginCtx := plugins.PluginContext{
-		Bus:     eventBus,
-		Session: client,
-		Fd:      int(os.Stdin.Fd()),
-		Data:    map[string]interface{}{"cwd": "/home/sn0wm4n"},
-	}
-
-	loadedPlugins := []plugins.Plugin{
-		// &DirectoryTreePlugin{},
-		&explorer.ExplorerPlugin{},
-		&pty.TerminalPlugin{},
-	}
-	for _, p := range loadedPlugins {
-		p.Init(pluginCtx)
-		registry.Register(p)
-	}
-
-	return registry
 }

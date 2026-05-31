@@ -74,5 +74,8 @@ func (t *TerminalPlugin) OnEvent(e bus.Event) {
 	// 	}
 	// }
 }
-func (t *TerminalPlugin) Render(vp plugins.Viewport) {}
-func (t *TerminalPlugin) Destroy()                   { t.OnBlur() }
+
+// No longer used
+// func (t *TerminalPlugin) Render(vp plugins.Viewport) {}
+
+func (t *TerminalPlugin) Destroy() { t.OnBlur() }

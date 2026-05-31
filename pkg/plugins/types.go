@@ -22,7 +22,6 @@ type Plugin interface {
 	ID() string
 
 	Init(ctx PluginContext)
-	Render(vp Viewport)
 
 	OnKey(e bus.Event)
 	OnEvent(e bus.Event)
