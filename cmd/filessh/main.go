@@ -1,112 +1,32 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
-	"golang.org/x/crypto/ssh"
-
-	"github.com/LSN0WM4N/filessh/pkg/bus"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
-	"github.com/LSN0WM4N/filessh/pkg/input"
-	"github.com/LSN0WM4N/filessh/pkg/plugins"
-	"github.com/LSN0WM4N/filessh/pkg/pty"
-	"github.com/LSN0WM4N/filessh/pkg/sshclient"
-	"github.com/LSN0WM4N/filessh/pkg/tui"
 )
 
 func main() {
-	godotenv.Load()
+	var entries []explorer.Entry
+	var actualDir string
 
-	client, err := createClient()
-	if err != nil {
+	if wd, err := os.Getwd(); err != nil {
 		panic(err)
-	}
-	defer client.Close()
-
-	// Setup main bus and plugins
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	eventBus := bus.NewEventBus()
-
-	registry := plugins.NewRegistry()
-
-	pluginCtx := plugins.PluginContext{
-		Bus:     eventBus,
-		Session: client,
-		Fd:      int(os.Stdin.Fd()),
-		Data:    map[string]interface{}{"cwd": "/home/sn0wm4n"},
-	}
-	// Works?
-	// I think no :(
-
-	explorer := &explorer.ExplorerPlugin{}
-
-	loadedPlugins := []plugins.Plugin{
-		// &DirectoryTreePlugin{},
-		explorer,
-		&pty.TerminalPlugin{},
-	}
-	for _, p := range loadedPlugins {
-		p.Init(pluginCtx)
-		registry.Register(p)
-	}
-
-	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-		focused := registry.Focused().ID()
-		if e.Payload.(bus.KeyInfo).Seq == "alt+q" {
-			if focused == "terminal" {
-				registry.SetFocus("explorer")
-			} else {
-				registry.SetFocus("terminal")
-			}
-			fmt.Printf("[Changed focus]\n")
+	} else {
+		actualDir = wd
+		entries, err = explorer.ReadDir(wd)
+		if err != nil {
+			panic(err)
 		}
-	})
-
-	// eventBus.Subscribe(bus.EventFocus, func(e bus.Event) {
-	// 	registry.SetFocus(e.Payload.(string))
-	// })
-
-	eventBus.Subscribe(bus.EventKey, func(e bus.Event) {
-		if p := registry.Focused(); p != nil {
-			p.OnKey(e)
-		}
-	})
-
-	registry.SetFocus("explorer")
-
-	eventBus.Subscribe(bus.EventQuit, func(e bus.Event) { cancel() })
-
-	go eventBus.Run(ctx)
-	go input.ReadInput(ctx, eventBus, registry)
-
-	tui.InitTui(explorer, eventBus)
-
-	<-ctx.Done()
-	os.Exit(0)
-}
-
-func createClient() (*ssh.Client, error) {
-	host := os.Getenv("SSH_HOST")
-	port := os.Getenv("SSH_PORT")
-	user := os.Getenv("SSH_USER")
-	pass := os.Getenv("SSH_PASS")
-
-	// Stablish a connection
-	client, err := sshclient.SetupConnection(sshclient.UserConfig{
-		Host:     host,
-		Port:     port,
-		Username: &user,
-		Password: &pass,
-	})
-
-	if err != nil {
-		return nil, err
 	}
 
-	return client, nil
+	fmt.Printf("Actual dir: %s \n", actualDir)
+	for _, entry := range entries {
+		icon := "*"
+		if entry.IsDir {
+			icon = "/"
+		}
+		fmt.Printf("[%s] %s\n", icon, entry.Name)
+	}
 }

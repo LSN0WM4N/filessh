@@ -1,12 +1,14 @@
 package explorer
 
-import "os"
+import "time"
 
-type remoteEntry struct {
-	name string
+type Entry struct {
+	Name  string
+	IsDir bool
+	Size  int64 // bytes
+
+	// Unix file mode bits (e.g. 0755, 0644)
+	Permissions uint16
+
+	Mtime time.Time
 }
-
-func (r *remoteEntry) Name() string               { return r.name }
-func (r *remoteEntry) IsDir() bool                { return false }
-func (r *remoteEntry) Type() os.FileMode          { return 0 }
-func (r *remoteEntry) Info() (os.FileInfo, error) { return nil, nil }
