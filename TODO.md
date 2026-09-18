@@ -1,0 +1,1 @@
+[] Smarter way to define a base path (pkg/explorer/explorer.go)
