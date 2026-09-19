@@ -8,6 +8,9 @@ type model struct {
 	explorer *explorer.Explorer
 	entries  []explorer.Entry
 	cursor   int
+
+	width  uint8
+	height uint8
 }
 
 type entriesLoadedMsg struct {

@@ -148,11 +148,11 @@ func TestExplorerChangeDir(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if explorer.Path != expectedPath {
+	if explorer.path != expectedPath {
 		t.Fatalf(
 			"expected path %q, got %q",
 			expectedPath,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }
@@ -172,11 +172,11 @@ func TestExplorerChangeDirNonExistingDirectory(t *testing.T) {
 		t.Fatal("expected ChangeDir() to return false")
 	}
 
-	if explorer.Path != tempDir {
+	if explorer.path != tempDir {
 		t.Fatalf(
 			"Path should not change, expected %q, got %q",
 			tempDir,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }
@@ -202,11 +202,11 @@ func TestExplorerChangeDirFile(t *testing.T) {
 		t.Fatal("expected ChangeDir() to return false for a file")
 	}
 
-	if explorer.Path != tempDir {
+	if explorer.path != tempDir {
 		t.Fatalf(
 			"Path should not change, expected %q, got %q",
 			tempDir,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }
@@ -232,11 +232,11 @@ func TestExplorerChangeDirParent(t *testing.T) {
 		t.Fatal("expected ChangeDir(\"..\") to return false")
 	}
 
-	if explorer.Path != tempDir {
+	if explorer.path != tempDir {
 		t.Fatalf(
 			"Path should not change, expected %q, got %q",
 			tempDir,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }
@@ -272,11 +272,11 @@ func TestExplorerChangeDirParentFromChild(t *testing.T) {
 		t.Fatal("expected to go back to parent")
 	}
 
-	if explorer.Path != tempDir {
+	if explorer.path != tempDir {
 		t.Fatalf(
 			"expected path %q, got %q",
 			tempDir,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }
@@ -317,11 +317,11 @@ func TestExplorerChangeDirCannotEscapeBasePath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if explorer.Path != expectedPath {
+	if explorer.path != expectedPath {
 		t.Fatalf(
 			"expected path to remain %q, got %q",
 			expectedPath,
-			explorer.Path,
+			explorer.path,
 		)
 	}
 }

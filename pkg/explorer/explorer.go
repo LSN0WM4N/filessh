@@ -6,15 +6,19 @@ import (
 )
 
 type Explorer struct {
-	Path string
+	path string
 
 	basePath string
+}
+
+func (e *Explorer) Path() string {
+	return e.path
 }
 
 func (e *Explorer) List() ([]Entry, error) {
 	results := make([]Entry, 0)
 
-	rawList, err := os.ReadDir(e.Path)
+	rawList, err := os.ReadDir(e.path)
 	if err != nil {
 		// At this point, results is an empty array
 		return results, err
@@ -49,7 +53,7 @@ func (e *Explorer) List() ([]Entry, error) {
 }
 
 func (e *Explorer) ChangeDir(dirName string) (bool, error) {
-	newPath := filepath.Join(e.Path, dirName)
+	newPath := filepath.Join(e.path, dirName)
 
 	if !isValidNewPath(newPath, e.basePath) {
 		return false, nil
@@ -61,7 +65,7 @@ func (e *Explorer) ChangeDir(dirName string) (bool, error) {
 		return false, err
 	}
 
-	e.Path = newPath
+	e.path = newPath
 
 	return true, nil
 }
@@ -73,7 +77,7 @@ func New(path string) *Explorer {
 	}
 
 	newExplorer := Explorer{
-		Path:     absolutePath,
+		path:     absolutePath,
 		basePath: absolutePath, // !TODO: Smarter way to define a base path
 	}
 

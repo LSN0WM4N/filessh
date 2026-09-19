@@ -8,11 +8,40 @@ import (
 
 func (m model) View() tea.View {
 	var s string
+
 	entries := m.entries
+
+	start := 0
+	end := len(m.entries)
+
+	height := int(m.height)
+
+	if height <= 0 {
+		return tea.NewView("")
+	}
+
+	if len(m.entries) > height {
+		cursorOffset := 3
+
+		end = height
+
+		if m.cursor > cursorOffset {
+			start = m.cursor - cursorOffset
+			end = start + height
+		}
+
+		if end > len(m.entries) {
+			end = len(m.entries)
+			start = end - height
+		}
+
+		entries = m.entries[start:end]
+	}
 
 	for i, entry := range entries {
 		cursor := " "
-		if i == m.cursor {
+
+		if i == m.cursor-start {
 			cursor = ">"
 		}
 
