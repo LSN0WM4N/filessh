@@ -31,6 +31,10 @@ func (e *Explorer) List() ([]Entry, error) {
 			entryType = Dir
 		}
 
+		if entry.Name()[0] == '.' {
+			continue // ignore hidden files by now
+		}
+
 		results = append(results, Entry{
 			Name:        entry.Name(),
 			Size:        info.Size(),
