@@ -47,6 +47,6 @@ func reloadExplorerWithPath(m *model, newDirName string) {
 		return
 	}
 
-	m.entries, _ = m.explorer.List()
+	m.entries, _ = m.explorer.List(true, true)
 	m.cursor = 0
 }

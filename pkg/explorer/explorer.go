@@ -15,8 +15,24 @@ func (e *Explorer) Path() string {
 	return e.path
 }
 
-func (e *Explorer) List() ([]Entry, error) {
+// A function that list all the subdirectories in the explorer directory
+// it takes `includeBackwardPath` for include de '..' path to go back
+// and `ignoreHidden` for not include files or directories that start with '.'
+func (e *Explorer) List(includeBackwardPath, ignoreHidden bool) ([]Entry, error) {
 	results := make([]Entry, 0)
+
+	if includeBackwardPath {
+		results = append(results, Entry{
+			Name: "..",
+			Size: 4096,
+
+			Type: Dir,
+
+			CTime:       0,
+			MTime:       0,
+			Permissions: 0xFF,
+		})
+	}
 
 	rawList, err := os.ReadDir(e.path)
 	if err != nil {
@@ -35,8 +51,8 @@ func (e *Explorer) List() ([]Entry, error) {
 			entryType = Dir
 		}
 
-		if entry.Name()[0] == '.' {
-			continue // ignore hidden files by now
+		if shouldIgnore(ignoreHidden, entry.Name()) {
+			continue
 		}
 
 		results = append(results, Entry{

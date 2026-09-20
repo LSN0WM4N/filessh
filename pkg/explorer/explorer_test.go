@@ -33,7 +33,7 @@ func TestExplorerList(t *testing.T) {
 
 	explorer := New(tempDir)
 
-	entries, err := explorer.List()
+	entries, err := explorer.List(false, false)
 	if err != nil {
 		t.Fatalf("List() returned an error: %v", err)
 	}
@@ -90,7 +90,7 @@ func TestExplorerListEmptyDirectory(t *testing.T) {
 
 	explorer := New(tempDir)
 
-	entries, err := explorer.List()
+	entries, err := explorer.List(false, false)
 	if err != nil {
 		t.Fatalf("List() returned an error: %v", err)
 	}
@@ -107,7 +107,7 @@ func TestExplorerListNonExistingDirectory(t *testing.T) {
 
 	explorer := New(nonExistingPath)
 
-	entries, err := explorer.List()
+	entries, err := explorer.List(false, false)
 
 	if err == nil {
 		t.Fatal("expected an error, got nil")

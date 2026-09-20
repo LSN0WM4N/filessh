@@ -14,14 +14,14 @@ func (m model) View() tea.View {
 	start := 0
 	end := len(m.entries)
 
-	height := int(m.height)
+	height := int(m.height)&0xFF - BORDER_OFFSET
 
 	if height <= 0 {
 		return tea.NewView("")
 	}
 
 	if len(m.entries) > height {
-		cursorOffset := 3
+		cursorOffset := CURSOR_OFFSET
 
 		end = height
 

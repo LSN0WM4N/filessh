@@ -28,3 +28,11 @@ func isValidNewPath(newPath, basePath string) bool {
 
 	return true
 }
+
+func shouldIgnore(ignoreHidden bool, filename string) bool {
+	if !ignoreHidden || filename == ".." {
+		return false
+	} else {
+		return filename[0] == '.'
+	}
+}
