@@ -2,8 +2,22 @@
 
 ~~Tool for navigate in ssh servers, a way to simplify the endless~~
 
-
 Tool for navigate locally. Something like an improvement of `ls/cd`.
+
+For try it out just run the command: 
+
+```
+git clone https://github.com/LSN0WM4N/filessh.git
+cd filessh 
+go run cmd/filessh/main.go
+```
+
+I've being working in a backward compatibility for terminals that does not support UTF-8 and so.
+If you want to take a look just have to run 
+
+```
+go run cmd/filessh/main.go --force-backward
+```
 
 
 # ~~Abandoned Project~~
