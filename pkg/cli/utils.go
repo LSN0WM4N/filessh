@@ -2,7 +2,11 @@ package cli
 
 import (
 	"cmp"
+	"fmt"
+	"strings"
+	"time"
 
+	"charm.land/lipgloss/v2"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
 )
 
@@ -15,4 +19,100 @@ func compareByTypeFirst(a, b explorer.Entry) int {
 	} else {
 		return 1
 	}
+}
+
+func renderImagePlaceholder(width int) string {
+	imageWidth := 18
+
+	if width < imageWidth {
+		imageWidth = width
+	}
+
+	if imageWidth < 4 {
+		return ""
+	}
+
+	imageHeight := 8
+
+	border := "┌" + strings.Repeat("─", imageWidth-2) + "┐"
+	bottom := "└" + strings.Repeat("─", imageWidth-2) + "┘"
+
+	var s strings.Builder
+
+	s.WriteString(border)
+	s.WriteByte('\n')
+
+	for i := 0; i < imageHeight-2; i++ {
+		insideWidth := imageWidth - 2
+
+		text := ""
+
+		if i == (imageHeight-2)/2 {
+			text = "PREVIEW"
+		}
+
+		paddingLeft := (insideWidth - len(text)) / 2
+		paddingRight := insideWidth - paddingLeft - len(text)
+
+		line := "│"
+		line += strings.Repeat(" ", paddingLeft)
+		line += text
+		line += strings.Repeat(" ", paddingRight)
+		line += "│"
+
+		s.WriteString(line)
+		s.WriteByte('\n')
+	}
+
+	s.WriteString(bottom)
+
+	return s.String()
+}
+
+func formatUnixTime(timestamp int) string {
+	t := time.Unix(int64(timestamp), 0)
+	return t.Format("02/01/2006 15:04")
+}
+
+func formatSize(size int64) string {
+	const unit = 1024
+
+	if size < unit {
+		return fmt.Sprintf("%d B", size)
+	}
+
+	div, exp := int64(unit), 0
+
+	for n := size / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+
+	return fmt.Sprintf(
+		"%.1f %cB",
+		float64(size)/float64(div),
+		"KMGTPE"[exp],
+	)
+}
+
+func truncateString(s string, maxWidth int) string {
+	if maxWidth <= 0 {
+		return ""
+	}
+
+	if lipgloss.Width(s) <= maxWidth {
+		return s
+	}
+
+	if maxWidth <= 3 {
+		return s[:maxWidth]
+	}
+
+	runes := []rune(s)
+
+	if len(runes) <= maxWidth {
+		return s
+	}
+
+	return string(runes[:maxWidth-3]) + "..."
 }
