@@ -3,6 +3,7 @@ package cli
 import (
 	"cmp"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -115,4 +116,45 @@ func truncateString(s string, maxWidth int) string {
 	}
 
 	return string(runes[:maxWidth-3]) + "..."
+}
+
+func CharacterToDIsplay(name string) rune {
+	realName := name
+	if !supportsUTF8() {
+		realName += "_RETRO"
+	}
+
+	switch realName {
+	case "FOLDER":
+		return FOLDER_ICON
+	case "FILE":
+		return FILE_ICON
+	case "BACK":
+		return BACK_ICON
+
+	case "FOLDER_RETRO":
+		return FOLDER_ICON_RETRO
+	case "FILE_RETRO":
+		return FILE_ICON_RETRO
+	case "BACK_RETRO":
+		return BACK_ICON_RETRO
+
+	default:
+		return ' '
+	}
+}
+
+// EXPERIMENTAL
+// TODO: Just ask one time for performance
+func supportsUTF8() bool {
+	for _, key := range []string{"LC_ALL", "LC_CTYPE", "LANG"} {
+		value := os.Getenv(key)
+
+		if strings.Contains(strings.ToLower(value), "utf-8") ||
+			strings.Contains(strings.ToLower(value), "utf8") {
+			return true
+		}
+	}
+
+	return false
 }
