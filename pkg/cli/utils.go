@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"charm.land/lipgloss/v2"
+
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
 )
 
@@ -140,12 +141,32 @@ func CharacterToDIsplay(name string) rune {
 		return FOLDER_ICON
 	case "FILE":
 		return FILE_ICON
+	case "IMAGE":
+		return IMAGE_ICON
+	case "AUDIO":
+		return AUDIO_ICON
+	case "VIDEO":
+		return VIDEO_ICON
+	case "PDF":
+		fallthrough
+	case "DOCUMENT":
+		return PDF_ICON
 	case "BACK":
 		return BACK_ICON
 
 	case "FOLDER_RETRO":
 		return FOLDER_ICON_RETRO
 	case "FILE_RETRO":
+		fallthrough
+	case "IMAGE_RETRO":
+		fallthrough
+	case "AUDIO_RETRO":
+		fallthrough
+	case "VIDEO_RETRO":
+		fallthrough
+	case "PDF_RETRO":
+		fallthrough
+	case "DOCUMENT_RETRO":
 		return FILE_ICON_RETRO
 	case "BACK_RETRO":
 		return BACK_ICON_RETRO
@@ -156,7 +177,6 @@ func CharacterToDIsplay(name string) rune {
 }
 
 // EXPERIMENTAL
-// TODO: Just ask one time for performance
 func supportsUTF8() bool {
 	if forceBackwardFlag {
 		return false

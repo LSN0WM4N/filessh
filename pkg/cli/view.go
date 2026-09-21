@@ -105,8 +105,8 @@ func buildLeftPanel(
 			cursor = ">"
 		}
 
-		if entry.Type == explorer.File {
-			icon = CharacterToDIsplay("FILE")
+		if entry.Type != explorer.Dir {
+			icon = CharacterToDIsplay(strings.ToUpper(string(entry.Type)))
 		}
 
 		if entry.Name == ".." {

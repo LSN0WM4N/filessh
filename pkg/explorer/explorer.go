@@ -46,9 +46,9 @@ func (e *Explorer) List(includeBackwardPath, ignoreHidden bool) ([]Entry, error)
 			return results, err
 		}
 
-		entryType := File
-		if entry.IsDir() {
-			entryType = Dir
+		entryType := Dir
+		if !entry.IsDir() {
+			entryType = getTypeFromMIME(filepath.Join(e.path, entry.Name()))
 		}
 
 		if shouldIgnore(ignoreHidden, entry.Name()) {
