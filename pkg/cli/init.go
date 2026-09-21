@@ -1,10 +1,16 @@
 package cli
 
-import tea "charm.land/bubbletea/v2"
+import (
+	"slices"
+
+	tea "charm.land/bubbletea/v2"
+)
 
 func (m model) Init() tea.Cmd {
 	return func() tea.Msg {
 		list, err := m.explorer.List(true, true)
+		slices.SortFunc(list, compareByTypeFirst)
+
 		if err != nil {
 			return "Unable to load the current dir"
 		}

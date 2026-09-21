@@ -1,6 +1,10 @@
 package cli
 
-import tea "charm.land/bubbletea/v2"
+import (
+	"slices"
+
+	tea "charm.land/bubbletea/v2"
+)
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -48,5 +52,6 @@ func reloadExplorerWithPath(m *model, newDirName string) {
 	}
 
 	m.entries, _ = m.explorer.List(true, true)
+	slices.SortFunc(m.entries, compareByTypeFirst)
 	m.cursor = 0
 }

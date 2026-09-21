@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	tea "charm.land/bubbletea/v2"
+	"github.com/LSN0WM4N/filessh/pkg/explorer"
 )
 
 func (m model) View() tea.View {
@@ -40,12 +41,19 @@ func (m model) View() tea.View {
 
 	for i, entry := range entries {
 		cursor := " "
+		icon := FOLDER_ICON
 
 		if i == m.cursor-start {
 			cursor = ">"
 		}
+		if entry.Type == explorer.File {
+			icon = FILE_ICON
+		}
+		if entry.Name == ".." {
+			icon = BACK_ICON
+		}
 
-		s += fmt.Sprintf("%s [%s]\n", cursor, entry.Name)
+		s += fmt.Sprintf("%s %c %s\n", cursor, icon, entry.Name)
 	}
 
 	return tea.NewView(s)
