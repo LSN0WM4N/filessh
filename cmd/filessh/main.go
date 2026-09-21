@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,8 +11,17 @@ import (
 )
 
 func main() {
-	exp := explorer.New("/home/sn0wm4n")
+	// Load flag values
+	forceBackward := flag.Bool(
+		"force-backward",
+		false,
+		"Force backward-compatible terminal output",
+	)
+	flag.Parse()
+	cli.SetForceBackward(*forceBackward)
 
+	// Create the explorer
+	exp := explorer.New("/home/sn0wm4n")
 	p := tea.NewProgram(cli.NewModel(exp))
 
 	if _, err := p.Run(); err != nil {
