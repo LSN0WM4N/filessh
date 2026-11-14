@@ -7,8 +7,8 @@ import (
 	"runtime"
 
 	tea "charm.land/bubbletea/v2"
-	cli "github.com/LSN0WM4N/filessh/pkg/cli"
 	explorer "github.com/LSN0WM4N/filessh/pkg/explorer"
+	cli "github.com/LSN0WM4N/filessh/pkg/ui"
 )
 
 func main() {

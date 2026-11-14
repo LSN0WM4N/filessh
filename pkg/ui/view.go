@@ -1,4 +1,4 @@
-package cli
+package ui
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
+	"github.com/LSN0WM4N/filessh/pkg/ui/format"
 )
 
 func (m model) View() tea.View {
@@ -73,7 +74,7 @@ func buildLeftPanel(
 			nameWidth = 1
 		}
 
-		name := truncateString(entry.Name, nameWidth)
+		name := format.TruncateString(entry.Name, nameWidth)
 
 		line := fmt.Sprintf(
 			"%s %c %s",

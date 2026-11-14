@@ -1,10 +1,11 @@
-package cli
+package ui
 
 import (
 	"fmt"
 
 	"charm.land/lipgloss/v2"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
+	"github.com/LSN0WM4N/filessh/pkg/ui/format"
 )
 
 var (
@@ -38,7 +39,7 @@ func renderPreview(entry *explorer.Entry, width int, height int) string {
 		"%s\n\n%s\n%s\n%s",
 		preview,
 		name,
-		formatUnixTime(entry.MTime),
-		formatSize(entry.Size),
+		format.UnixTime(entry.MTime),
+		format.Size(entry.Size),
 	)
 }

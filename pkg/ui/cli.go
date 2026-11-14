@@ -1,4 +1,4 @@
-package cli
+package ui
 
 import (
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
