@@ -12,54 +12,14 @@ import (
 func (m model) View() tea.View {
 	width := int(m.width)
 	height := int(m.height)
-
-	if width <= 0 || height <= 0 {
-		return tea.NewView("")
-	}
-
-	const gap = 2
-
-	leftWidth := int(float64(width) * 0.55)
-	rightWidth := width - leftWidth - gap
-
-	if leftWidth < 10 {
-		leftWidth = 10
-	}
-
-	if rightWidth < 10 {
-		rightWidth = 10
-	}
-
 	listHeight := height - BORDER_OFFSET
 
-	if listHeight <= 0 {
+	if width <= 0 || height <= 0 || listHeight <= 0 {
 		return tea.NewView("")
 	}
 
-	start := 0
-	end := len(m.entries)
-
-	if len(m.entries) > listHeight {
-		end = listHeight
-
-		if m.cursor > CURSOR_OFFSET {
-			start = m.cursor - CURSOR_OFFSET
-			end = start + listHeight
-		}
-
-		if end > len(m.entries) {
-			end = len(m.entries)
-			start = end - listHeight
-		}
-	}
-
-	entries := m.entries[start:end]
-
-	var selected *explorer.Entry
-
-	if m.cursor >= 0 && m.cursor < len(m.entries) {
-		selected = &m.entries[m.cursor]
-	}
+	leftWidth, rightWidth := calculateColumnsWidths(width)
+	entries, start, selected := m.computeVisibleWindow(listHeight)
 
 	leftPanel := buildLeftPanel(
 		start,
@@ -75,13 +35,7 @@ func (m model) View() tea.View {
 		listHeight,
 	)
 
-	view := lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		leftPanel,
-		strings.Repeat(" ", gap),
-		rightPanel,
-	)
-
+	view := buildView(leftPanel, rightPanel)
 	return tea.NewView(view)
 }
 
@@ -158,4 +112,13 @@ func buildRightPanel(
 		MaxWidth(rightWidth).
 		MaxHeight(listHeight).
 		Render(rightContent)
+}
+
+func buildView(leftPanel string, rightPanel string) string {
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		leftPanel,
+		strings.Repeat(" ", VIEW_GAP),
+		rightPanel,
+	)
 }

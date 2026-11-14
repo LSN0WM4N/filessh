@@ -24,3 +24,28 @@ func NewModel(exp *explorer.Explorer) model {
 		cursor:   0,
 	}
 }
+
+func (m model) computeVisibleWindow(listHeight int) (entries []explorer.Entry, start int, selected *explorer.Entry) {
+	total := len(m.entries)
+	end := total
+
+	if total > listHeight {
+		end = listHeight
+
+		if m.cursor > CURSOR_OFFSET {
+			start = m.cursor - CURSOR_OFFSET
+			end = start + listHeight
+		}
+
+		if end > total {
+			end = total
+			start = end - listHeight
+		}
+	}
+
+	if m.cursor >= 0 && m.cursor < total {
+		selected = &m.entries[m.cursor]
+	}
+
+	return m.entries[start:end], start, selected
+}

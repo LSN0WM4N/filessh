@@ -199,3 +199,10 @@ func supportsUTF8() bool {
 	supportUTF8Result = &result
 	return result
 }
+
+func calculateColumnsWidths(width int) (int, int) {
+	leftWidth := int(float64(width) * LEFT_WIDTH_PERCENTAGE)
+	rightWidth := width - leftWidth - VIEW_GAP
+
+	return max(leftWidth, 10), max(rightWidth, 10)
+}
