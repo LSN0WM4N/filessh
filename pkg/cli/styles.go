@@ -24,24 +24,15 @@ func renderPreview(entry *explorer.Entry, width int, height int) string {
 	if entry == nil {
 		return ""
 	}
+	contentWidth := max(width-4, 10)
 
 	if entry.Type == explorer.Dir {
-		return fmt.Sprintf(
-			"%c %s",
-			FOLDER_ICON,
-			truncateString(entry.Name, width-4),
-		)
-	}
-
-	contentWidth := width - 4
-
-	if contentWidth < 10 {
-		contentWidth = 10
+		return folderThumbnail(entry, contentWidth)
 	}
 
 	name := entry.Name
 
-	preview := renderImagePlaceholder(contentWidth)
+	preview := fileThumbnail(entry, contentWidth)
 
 	return fmt.Sprintf(
 		"%s\n\n%s\n%s\n%s",

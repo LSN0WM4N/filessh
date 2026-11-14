@@ -45,66 +45,6 @@ func compareByTypeFirst(a, b explorer.Entry) int {
 	}
 }
 
-// renderImagePlaceholder draws a rectangular frame with the text "PREVIEW"
-// centered inside, acting as a placeholder for the image preview in the
-// right panel (feature still in development).
-//
-// The frame is at most 18 columns wide and shrinks to width if the available
-// space is smaller. It returns an empty string if the terminal does not
-// support UTF-8 (the box-drawing characters require UTF-8) or if the
-// resulting width is less than 4 columns.
-func renderImagePlaceholder(width int) string {
-	if !supportsUTF8() {
-		return ""
-	}
-
-	imageWidth := 18
-
-	if width < imageWidth {
-		imageWidth = width
-	}
-
-	if imageWidth < 4 {
-		return ""
-	}
-
-	imageHeight := 8
-
-	border := "┌" + strings.Repeat("─", imageWidth-2) + "┐"
-	bottom := "└" + strings.Repeat("─", imageWidth-2) + "┘"
-
-	var s strings.Builder
-
-	s.WriteString(border)
-	s.WriteByte('\n')
-
-	for i := 0; i < imageHeight-2; i++ {
-		insideWidth := imageWidth - 2
-
-		text := ""
-
-		if i == (imageHeight-2)/2 {
-			text = "PREVIEW"
-		}
-
-		paddingLeft := (insideWidth - len(text)) / 2
-		paddingRight := insideWidth - paddingLeft - len(text)
-
-		line := "│"
-		line += strings.Repeat(" ", paddingLeft)
-		line += text
-		line += strings.Repeat(" ", paddingRight)
-		line += "│"
-
-		s.WriteString(line)
-		s.WriteByte('\n')
-	}
-
-	s.WriteString(bottom)
-
-	return s.String()
-}
-
 // formatUnixTime converts a Unix timestamp (seconds since the epoch) to a
 // date and time string in the local time zone using the format
 // "DD/MM/YYYY HH:mm".
