@@ -19,7 +19,7 @@ func main() {
 		"Force backward-compatible terminal output",
 	)
 	flag.Parse()
-	cli.SetForceBackward(*forceBackward)
+	cli.SetForceBackwardCompatibility(*forceBackward)
 
 	// Create the explorer
 	homeDir := os.Getenv("HOME")
