@@ -1,16 +1,14 @@
 package ui
 
 import (
-	"slices"
-
 	tea "charm.land/bubbletea/v2"
 )
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.filelist.Update(msg)
+	m.preview.Update(msg)
 
-	case entriesLoadedMsg:
-		m.entries = msg.entries
+	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:
 		m.width = uint8(msg.Width & 0xFF)
@@ -19,22 +17,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
-			}
 
 		case "down", "j":
-			if m.cursor < len(m.entries)-1 {
-				m.cursor++
-			}
 
 		case "space", "enter":
-			newDirName := m.entries[m.cursor].Name
-
-			reloadExplorerWithPath(&m, newDirName)
 
 		case "backspace":
-			reloadExplorerWithPath(&m, "..")
 
 		case "q", "ctrl+c":
 			return m, tea.Quit
@@ -42,16 +30,4 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
-}
-
-func reloadExplorerWithPath(m *model, newDirName string) {
-	success, _ := m.explorer.ChangeDir(newDirName)
-
-	if !success {
-		return
-	}
-
-	m.entries, _ = m.explorer.List(true, true)
-	slices.SortFunc(m.entries, compareByTypeFirst)
-	m.cursor = 0
 }

@@ -1,25 +1,23 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"runtime"
 
 	tea "charm.land/bubbletea/v2"
 	explorer "github.com/LSN0WM4N/filessh/pkg/explorer"
-	cli "github.com/LSN0WM4N/filessh/pkg/ui"
+	"github.com/LSN0WM4N/filessh/pkg/ui"
 )
 
 func main() {
 	// Load flag values
-	forceBackward := flag.Bool(
-		"force-backward",
-		false,
-		"Force backward-compatible terminal output",
-	)
-	flag.Parse()
-	cli.SetForceBackwardCompatibility(*forceBackward)
+	// forceBackward := flag.Bool(
+	// 	"force-backward",
+	// 	false,
+	// 	"Force backward-compatible terminal output",
+	// )
+	// flag.Parse()
 
 	// Create the explorer
 	homeDir := os.Getenv("HOME")
@@ -34,7 +32,7 @@ func main() {
 	}
 
 	exp := explorer.New(homeDir)
-	p := tea.NewProgram(cli.NewModel(exp))
+	p := tea.NewProgram(ui.New(exp))
 
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error:", err)

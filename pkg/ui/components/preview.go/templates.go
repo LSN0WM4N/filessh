@@ -1,36 +1,23 @@
-package ui
+package preview
 
 import (
 	"strings"
-
-	"github.com/LSN0WM4N/filessh/pkg/explorer"
 )
 
-func fileThumbnail(entry *explorer.Entry, width int) string {
-	switch entry.Type {
-	case explorer.Document:
-		return textFileThumbnail(width)
-	case explorer.Audio:
-		return audioFileThumbnail(width)
-	default:
-		return defaultFileThumbnail(width)
-	}
-}
-
-func textFileThumbnail(width int) string {
+func (m *Model) textFileThumbnail() string {
 	return "TEXT"
 }
 
-func audioFileThumbnail(width int) string {
+func (m *Model) audioFileThumbnail() string {
 	return "AUDIO"
 }
 
-func defaultFileThumbnail(width int) string {
-	if !supportsUTF8() {
+func (m *Model) defaultFileThumbnail() string {
+	if !m.config.UFT8() {
 		return ""
 	}
 
-	imageWidth := min(width, 18)
+	imageWidth := min(m.width, 18)
 
 	if imageWidth < 4 {
 		return ""
