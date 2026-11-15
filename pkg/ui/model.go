@@ -18,8 +18,8 @@ type Model struct {
 	filelist filelist.Model
 	preview  preview.Model
 
-	width  uint8
-	height uint8
+	width  int
+	height int
 }
 
 func New(exp *explorer.Explorer) Model {

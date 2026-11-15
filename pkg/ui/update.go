@@ -5,14 +5,20 @@ import (
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	m.filelist.Update(msg)
-	m.preview.Update(msg)
+	var cmds []tea.Cmd
+	var cmd tea.Cmd
+
+	m.filelist, cmd = m.filelist.Update(msg)
+	cmds = append(cmds, cmd)
+
+	m.preview, cmd = m.preview.Update(msg)
+	cmds = append(cmds, cmd)
 
 	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:
-		m.width = uint8(msg.Width & 0xFF)
-		m.height = uint8(msg.Height & 0xFF)
+		m.width = msg.Width
+		m.height = msg.Height
 
 	case tea.KeyPressMsg:
 		switch msg.String() {
@@ -29,5 +35,5 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	return m, nil
+	return m, tea.Batch(cmds...)
 }
