@@ -29,7 +29,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 // Selection change will recive an Entry with te new entry to be displayed
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case events.SelectionChanged:
 		entry := msg.Entry
@@ -40,5 +40,5 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = int(float32(msg.Height) * VIEW_GAP)
 	}
 
-	return nil, nil
+	return m, nil
 }

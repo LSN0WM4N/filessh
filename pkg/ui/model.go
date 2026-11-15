@@ -6,8 +6,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/LSN0WM4N/filessh/pkg/events"
 	"github.com/LSN0WM4N/filessh/pkg/explorer"
-	"github.com/LSN0WM4N/filessh/pkg/ui/components/filelist.go"
-	"github.com/LSN0WM4N/filessh/pkg/ui/components/preview.go"
+	"github.com/LSN0WM4N/filessh/pkg/ui/components/filelist"
+	"github.com/LSN0WM4N/filessh/pkg/ui/components/preview"
 	"github.com/LSN0WM4N/filessh/pkg/ui/theme"
 )
 

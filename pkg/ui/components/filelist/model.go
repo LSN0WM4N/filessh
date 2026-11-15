@@ -35,7 +35,7 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case events.SetupExplorer:
 		m.entries = msg.Entries
@@ -60,9 +60,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "backspace":
 
 		case "q", "ctrl+c":
-			return nil, tea.Quit
+			return m, tea.Quit
 		}
 	}
 
-	return nil, nil
+	return m, nil
 }
