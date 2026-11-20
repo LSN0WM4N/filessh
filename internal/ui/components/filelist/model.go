@@ -21,6 +21,7 @@ type Model struct {
 }
 
 const VIEW_GAP float32 = 0.55
+const LIST_CURSOR_MARGIN int = 3
 
 func New(
 	config *theme.Config,
@@ -72,7 +73,32 @@ func (m *Model) goBack() tea.Cmd {
 	}
 }
 
-func (m *Model) calculateCursorFrame() {
-	m.startCursor = 0
-	m.endCursor = min(len(*m.entries), m.height-1)
+func (m *Model) updateCursorView() {
+	total := len(*m.entries)
+
+	if total == 0 {
+		m.startCursor = 0
+		m.endCursor = 0
+		m.cursor = 0
+		return
+	}
+
+	m.cursor = max(0, min(m.cursor, total-1))
+
+	viewHeight := max(m.height, 1)
+
+	if m.cursor-LIST_CURSOR_MARGIN < m.startCursor {
+		m.startCursor = m.cursor - LIST_CURSOR_MARGIN
+	}
+
+	if m.cursor+LIST_CURSOR_MARGIN >= m.endCursor {
+		m.startCursor = m.cursor - viewHeight + 1 + LIST_CURSOR_MARGIN
+	}
+
+	m.startCursor = max(0, min(m.startCursor, max(total-viewHeight, 0)))
+	m.endCursor = min(m.startCursor+viewHeight, total)
+}
+
+func (m *Model) isNotInCursorBounds(cursor int) bool {
+	return m.startCursor > cursor || cursor > m.endCursor
 }

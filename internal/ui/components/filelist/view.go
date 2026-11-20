@@ -14,12 +14,14 @@ func (m Model) View() string {
 	var leftLines []string
 
 	for i, entry := range *m.entries {
+		if m.isNotInCursorBounds(i) {
+			continue
+		}
+
 		cursor := " "
 		icon := theme.CharacterToDIsplay(m.config, "FOLDER")
 
-		absoluteIndex := m.startCursor + i
-
-		if absoluteIndex == m.cursor {
+		if i == m.cursor {
 			cursor = ">"
 		}
 

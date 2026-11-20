@@ -16,17 +16,20 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.width = int(float32(msg.Width) * VIEW_GAP)
 		m.height = msg.Height
 
-		m.calculateCursorFrame()
+		m.updateCursorView()
 
 	case tea.KeyPressMsg:
 		switch msg.String() {
-		// TOFIX: Bug navegating when the windows is smallet than the total files
 		case "up", "k":
 			m.cursor = max(m.cursor-1, 0)
+			m.updateCursorView()
+
 			return m, m.selectionCMD()
 
 		case "down", "j":
-			m.cursor = min(m.cursor+1, m.endCursor)
+			m.cursor = min(m.cursor+1, len(*m.entries)-1)
+			m.updateCursorView()
+
 			return m, m.selectionCMD()
 
 		case "space", "enter":
@@ -42,7 +45,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case events.DirectoryListChanged:
 		m.entries = msg.DirectoryList
 		m.cursor = msg.CursorPosition
-		m.calculateCursorFrame()
+		m.updateCursorView()
 	}
 
 	return m, nil
