@@ -2,9 +2,9 @@ package preview
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/LSN0WM4N/filessh/pkg/events"
-	"github.com/LSN0WM4N/filessh/pkg/explorer"
-	"github.com/LSN0WM4N/filessh/pkg/ui/theme"
+	"github.com/LSN0WM4N/filessh/internal/events"
+	"github.com/LSN0WM4N/filessh/internal/explorer"
+	"github.com/LSN0WM4N/filessh/internal/ui/theme"
 )
 
 type Model struct {

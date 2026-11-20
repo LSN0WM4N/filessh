@@ -2,9 +2,9 @@ package filelist
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/LSN0WM4N/filessh/pkg/events"
-	"github.com/LSN0WM4N/filessh/pkg/explorer"
-	"github.com/LSN0WM4N/filessh/pkg/ui/theme"
+	"github.com/LSN0WM4N/filessh/internal/events"
+	"github.com/LSN0WM4N/filessh/internal/explorer"
+	"github.com/LSN0WM4N/filessh/internal/ui/theme"
 )
 
 type Model struct {
@@ -51,11 +51,14 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		switch msg.String() {
 		case "up", "k":
 			m.cursor = max(m.cursor-1, 0)
+			return m, m.selectionCMD()
 
 		case "down", "j":
 			m.cursor = min(m.cursor+1, m.endCursor)
+			return m, m.selectionCMD()
 
 		case "space", "enter":
+			return m, m.navigate()
 
 		case "backspace":
 
@@ -65,4 +68,34 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+func (m Model) Selected() *explorer.Entry {
+	if m.entries == nil || len(*m.entries) == 0 {
+		return nil
+	}
+	if m.cursor < 0 || m.cursor >= len(*m.entries) {
+		return nil
+	}
+	return &(*m.entries)[m.cursor]
+}
+
+func (m Model) selectionCMD() tea.Cmd {
+	entry := m.Selected()
+	return func() tea.Msg {
+		return events.SelectionChanged{Entry: *entry}
+	}
+}
+
+func (m Model) navigate() tea.Cmd {
+	goToEntry := (*m.entries)[m.cursor]
+
+	if goToEntry.Type != explorer.Dir {
+		return nil
+		// in the future this will "execute" the file
+	}
+
+	return func() tea.Msg {
+		return events.WorkingDirectoryChanged{ChildName: goToEntry.Name}
+	}
 }

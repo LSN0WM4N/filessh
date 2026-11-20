@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/LSN0WM4N/filessh/pkg/explorer"
-	"github.com/LSN0WM4N/filessh/pkg/ui/format"
-	"github.com/LSN0WM4N/filessh/pkg/ui/theme"
+	"github.com/LSN0WM4N/filessh/internal/explorer"
+	"github.com/LSN0WM4N/filessh/internal/ui/format"
+	"github.com/LSN0WM4N/filessh/internal/ui/theme"
 )
 
 func (m Model) View() string {

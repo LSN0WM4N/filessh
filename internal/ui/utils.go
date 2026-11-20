@@ -3,7 +3,7 @@ package ui
 import (
 	"cmp"
 
-	"github.com/LSN0WM4N/filessh/pkg/explorer"
+	"github.com/LSN0WM4N/filessh/internal/explorer"
 )
 
 // compareByTypeFirst compares two Entry values first by type and then by name.

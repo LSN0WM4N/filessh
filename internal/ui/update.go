@@ -2,6 +2,7 @@ package ui
 
 import (
 	tea "charm.land/bubbletea/v2"
+	"github.com/LSN0WM4N/filessh/internal/events"
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -20,15 +21,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
+	case events.WorkingDirectoryChanged:
+		childName := msg.ChildName
+
+		ok, err := m.explorer.ChangeDir(childName)
+
+		if err != nil || !ok {
+			break
+		}
+
+		m.explorer.List(true, true)
 	case tea.KeyPressMsg:
 		switch msg.String() {
-		case "up", "k":
-
-		case "down", "j":
-
-		case "space", "enter":
-
-		case "backspace":
 
 		case "q", "ctrl+c":
 			return m, tea.Quit
