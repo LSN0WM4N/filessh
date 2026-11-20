@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 
@@ -19,6 +20,14 @@ func main() {
 	// 	"Force backward-compatible terminal output",
 	// )
 	// flag.Parse()
+
+	// Login to file config
+	// TODO: Setup a logger
+	f, err := tea.LogToFile("debug.log", "filessh")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
 	// Create the explorer
 	homeDir := os.Getenv("HOME")

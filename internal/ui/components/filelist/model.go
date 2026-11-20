@@ -1,6 +1,8 @@
 package filelist
 
 import (
+	"log"
+
 	tea "charm.land/bubbletea/v2"
 	"github.com/LSN0WM4N/filessh/internal/events"
 	"github.com/LSN0WM4N/filessh/internal/explorer"
@@ -36,6 +38,8 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+	log.Printf("[ui.filelist.Model.Update] Recived message type: %T", msg)
+
 	switch msg := msg.(type) {
 	case events.SetupExplorer:
 		m.entries = msg.Entries
@@ -65,6 +69,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		}
+
+	case events.DirectoryListChanged:
+		log.Print("Payload: ")
+		log.Print(*msg.DirectoryList)
+
+		m.entries = msg.DirectoryList
+
+		// TODO: Create method for setting up the cursor bounds
+		m.cursor = 0
+		m.startCursor = 0
+		m.endCursor = len(*m.entries)
 	}
 
 	return m, nil
