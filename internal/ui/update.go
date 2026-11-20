@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"log"
-
 	tea "charm.land/bubbletea/v2"
 	"github.com/LSN0WM4N/filessh/internal/events"
 )
@@ -24,7 +22,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 
 	case events.WorkingDirectoryChanged:
-		log.Print("[ui.Model.Update] Recived message type: WorkingDirectoryChanged")
 		childName := msg.ChildName
 
 		ok, err := m.explorer.ChangeDir(childName)
@@ -41,8 +38,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		})
 		cmds = append(cmds, cmd)
 	case tea.KeyPressMsg:
-		log.Print("[ui.Model.Update] Recived message type: KeyPressMsg")
-
 		switch msg.String() {
 
 		case "q", "ctrl+c":

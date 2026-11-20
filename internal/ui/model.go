@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"slices"
-
 	tea "charm.land/bubbletea/v2"
 	"github.com/LSN0WM4N/filessh/internal/events"
 	"github.com/LSN0WM4N/filessh/internal/explorer"
@@ -43,7 +41,6 @@ func New(exp *explorer.Explorer) Model {
 func (m Model) Init() tea.Cmd {
 	return func() tea.Msg {
 		list, err := m.explorer.List(true, true)
-		slices.SortFunc(list, compareByTypeFirst)
 
 		if err != nil {
 			return "Unable to load the current dir"

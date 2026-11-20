@@ -3,6 +3,7 @@ package explorer
 import (
 	"os"
 	"path/filepath"
+	"slices"
 )
 
 type Explorer struct {
@@ -43,7 +44,7 @@ func (e *Explorer) List(includeBackwardPath, ignoreHidden bool) ([]Entry, error)
 	for _, entry := range rawList {
 		info, err := entry.Info()
 		if err != nil {
-			return results, err
+			continue // Ignore the fail
 		}
 
 		entryType := Dir
@@ -65,6 +66,7 @@ func (e *Explorer) List(includeBackwardPath, ignoreHidden bool) ([]Entry, error)
 		})
 	}
 
+	slices.SortFunc(results, compareByTypeFirst)
 	return results, nil
 }
 
