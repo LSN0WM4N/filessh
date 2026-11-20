@@ -86,3 +86,11 @@ func compareByTypeFirst(a, b Entry) int {
 		return 1
 	}
 }
+
+func parent(path string) string {
+	return filepath.Dir(path)
+}
+
+func basename(path string) string {
+	return filepath.Base(path)
+}

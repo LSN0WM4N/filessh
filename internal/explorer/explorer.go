@@ -16,6 +16,18 @@ func (e *Explorer) Path() string {
 	return e.path
 }
 
+func (e *Explorer) PathBasename() string {
+	return basename(e.path)
+}
+
+func (e *Explorer) Parent() string {
+	return parent(e.path)
+}
+
+func (e *Explorer) ParentBasename() string {
+	return basename(parent(e.path))
+}
+
 // A function that list all the subdirectories in the explorer directory
 // it takes `includeBackwardPath` for include de '..' path to go back
 // and `ignoreHidden` for not include files or directories that start with '.'

@@ -23,6 +23,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case events.WorkingDirectoryChanged:
 		childName := msg.ChildName
+		actualBasename := m.explorer.PathBasename()
 
 		ok, err := m.explorer.ChangeDir(childName)
 
@@ -30,12 +31,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			break
 		}
 
+		cursor := 0
 		newList, err := m.explorer.List(true, true) // TODO: Change hardcoded flags for real config paramters
+
+		if childName == ".." { // Was a goBack
+			cursor = firstWithName(newList, actualBasename)
+		}
 
 		// Emit message to update the file list
 		m.filelist, cmd = m.filelist.Update(events.DirectoryListChanged{
-			DirectoryList: &newList,
+			DirectoryList:  &newList,
+			CursorPosition: cursor,
 		})
+
 		cmds = append(cmds, cmd)
 	case tea.KeyPressMsg:
 		switch msg.String() {

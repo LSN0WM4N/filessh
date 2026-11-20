@@ -1,8 +1,6 @@
 package filelist
 
 import (
-	"log"
-
 	tea "charm.land/bubbletea/v2"
 
 	"github.com/LSN0WM4N/filessh/internal/events"
@@ -15,7 +13,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.cursor = 0
 
 	case tea.WindowSizeMsg:
-		log.Printf("[ui.filelist.Model.Update:WindowSizeMsg] Recived { Width: %d, Height: %d }", msg.Width, msg.Height)
 		m.width = int(float32(msg.Width) * VIEW_GAP)
 		m.height = msg.Height
 
@@ -44,8 +41,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	case events.DirectoryListChanged:
 		m.entries = msg.DirectoryList
-
-		m.cursor = 0
+		m.cursor = msg.CursorPosition
 		m.calculateCursorFrame()
 	}
 
