@@ -1,7 +1,6 @@
 package explorer
 
 import (
-	"cmp"
 	"path/filepath"
 	"strings"
 
@@ -72,19 +71,20 @@ func getTypeFromMIME(path string) EntryType {
 // compareByTypeFirst compares two Entry values first by type and then by name.
 // Directories are considered smaller than files, so they appear first when
 // sorting. If both have the same type, they are compared alphabetically
-// by Name.
+// by Name ignoring Case.
 //
 // It returns a negative value if a < b, a positive value if a > b, and zero
-// if they are equal, so it is compatible with slices.SortFunc.
+// if they are equal ignoring case, so it is compatible with slices.SortFunc.
 func compareByTypeFirst(a, b Entry) int {
-	if a.Type == b.Type {
-		return cmp.Compare(a.Name, b.Name)
+	if a.Type != b.Type {
+		if a.Type == Dir {
+			return -1
+		} else if b.Type == Dir {
+			return 1
+		}
 	}
-	if a.Type == Dir {
-		return -1
-	} else {
-		return 1
-	}
+
+	return strings.Compare(strings.ToLower(a.Name), strings.ToLower(b.Name))
 }
 
 func parent(path string) string {

@@ -22,7 +22,7 @@ type Model struct {
 
 func New(exp *explorer.Explorer) Model {
 	config := theme.New(theme.Options{})
-	entries, _ := exp.List(false, true)
+	entries, _ := exp.List(true, true)
 
 	var first *explorer.Entry
 	if len(entries) > 0 {

@@ -34,12 +34,7 @@ func (m Model) View() string {
 			icon = theme.CharacterToDIsplay(m.config, "BACK")
 		}
 
-		nameWidth := m.width - 5
-
-		if nameWidth < 1 {
-			nameWidth = 1
-		}
-
+		nameWidth := max(1, m.width-5)
 		name := format.TruncateString(entry.Name, nameWidth)
 
 		line := fmt.Sprintf(
