@@ -1,18 +1,36 @@
 package preview
 
-import (
-	"strings"
-)
+import "strings"
 
 func (m *Model) textFileThumbnail() string {
-	return "TEXT"
+	return m.customFileThumbnail("TEXT")
 }
 
 func (m *Model) audioFileThumbnail() string {
-	return "AUDIO"
+	return m.customFileThumbnail("AUDIO")
+}
+
+func (m *Model) VideoFileThumbnail() string {
+	return m.customFileThumbnail("Video")
+}
+
+func (m *Model) PDFFileThumbnail() string {
+	return m.customFileThumbnail("PDF")
+}
+
+func (m *Model) ImageFileThumbnail() string {
+	return m.customFileThumbnail("IMAGE")
+}
+
+func (m *Model) DirectoryFileThumbnail() string {
+	return m.customFileThumbnail("DIRECTORY")
 }
 
 func (m *Model) defaultFileThumbnail() string {
+	return m.customFileThumbnail("PREVIEW")
+}
+
+func (m *Model) customFileThumbnail(label string) string {
 	if !m.config.UFT8() {
 		return ""
 	}
@@ -39,7 +57,7 @@ func (m *Model) defaultFileThumbnail() string {
 		text := ""
 
 		if i == (imageHeight-2)/2 {
-			text = "PREVIEW"
+			text = label
 		}
 
 		paddingLeft := (insideWidth - len(text)) / 2

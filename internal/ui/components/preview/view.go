@@ -24,6 +24,14 @@ func (m Model) View() string {
 		preview = m.textFileThumbnail()
 	case explorer.Audio:
 		preview = m.audioFileThumbnail()
+	case explorer.Image:
+		preview = m.ImageFileThumbnail()
+	case explorer.PDF:
+		preview = m.PDFFileThumbnail()
+	case explorer.Video:
+		preview = m.VideoFileThumbnail()
+	case explorer.Dir:
+		preview = m.DirectoryFileThumbnail()
 	default:
 		preview = m.defaultFileThumbnail()
 	}
